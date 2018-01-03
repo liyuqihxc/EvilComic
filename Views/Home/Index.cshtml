@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="picbox">
+    <ul class="piclist">
+        @foreach(var pic in ViewBag.PicList)
+        {
+        <li>
+            <a class="pic" asp-action="ViewComic" asp-route-comicid="@pic.InformationId" target="_blank">
+                <img alt="<b>@pic.Title</b>" src="@Url.Action("CoverImage", new { ComicId = pic.InformationId })">
+            </a>
+            <a class="txt" asp-action="ViewComic" asp-route-comicid="@pic.InformationId" target="_blank"><b>@pic.Title</b></a>
+        </li>
+        }
+    </ul>
+</div>
+
+@if (ViewBag.PicList.Length != 0)
+{
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+    @if (ViewBag.PageNum == 1)
+    {
+        <li class="disabled"><span aria-hidden="true">上一页</span></li>
+    }
+    else if (ViewBag.PageNum > 1 && ViewBag.PageNum <= ViewBag.PageCount)
+    {
+    <li>
+        <a href="@Url.Action("Index", new { Category = ViewBag.Cat, PageNum = ViewBag.PageNum - 1 })" aria-label="Previous">
+            <span aria-hidden="true">上一页</span>
+        </a>
+    </li>
+    }
+    @if (ViewBag.PageNum == ViewBag.PageCount)
+    {
+        <li class="disabled"><span aria-hidden="true">下一页</span></li>
+    }
+    else if (ViewBag.PageNum >= 1 && ViewBag.PageNum < ViewBag.PageCount)
+    {
+    <li>
+        <a href="@Url.Action("Index", new { Category = ViewBag.Cat, PageNum = ViewBag.PageNum + 1 })" aria-label="Next">
+            <span aria-hidden="true">下一页</span>
+        </a>
+    </li>
+    }
+    <li>
+        <span>第 @ViewBag.PageNum 页 </span><span>共 @ViewBag.PageCount 页</span>
+    </li>
+  </ul>
+</nav>
+}

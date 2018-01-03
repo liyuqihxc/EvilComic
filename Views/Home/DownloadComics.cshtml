@@ -1,0 +1,89 @@
+﻿@model List<Xecategory>
+@{
+    Layout = null;
+}
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">邪恶漫画下载</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" method="POST">
+        @if (!ViewBag.TaskRunning)
+        {
+            <div class="form-group">
+                <label for="cats" class="col-sm-2 control-label">分类</label>
+                <div class="col-sm-10">
+                    <select id="cats" class="form-control">
+                        @foreach (var cat in Model)
+                        {
+                            <option value="@cat.CategoryId">
+                                @cat.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        else
+        {
+            <h5>下载进度</h5>
+            <h6>@ViewBag.Message</h6>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="@string.Format("{0:0}", ViewBag.PrecentComplete)" aria-valuemin="0" aria-valuemax="100" style="width: @string.Format("{0:0}", ViewBag.PrecentComplete)%;min-width: 2em;">
+                    @string.Format("{0:0.00}", ViewBag.PrecentComplete)%
+                </div>
+            </div>
+        }
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+    @if (!ViewBag.TaskRunning)
+    {
+    <button type="button" class="btn btn-primary" onclick="start_download();">开始下载</button>
+    <script>
+        function start_download() {
+            $.ajax({
+                url: '@Url.Action("StartDownload", "Home")',
+                type: 'POST',
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                data: {
+                    category: parseInt($('#cats').val())
+                },
+                dataType: "json",
+                traditional: true,
+                success: function (resultmodel) {
+                    $('#dl-status').removeClass('hidden');
+                    $('#dlg').modal('hide');
+                },
+                error: function (err, scnd) {
+                    alert(err.statusText);
+                }
+            });
+        }
+    </script>
+    }
+    else
+    {
+    <button type="button" class="btn btn-danger" onclick="stop_download();">停止下载</button>
+    <script>
+        function stop_download() {
+            $.ajax({
+                url: '@Url.Action("StopDownload", "Home")',
+                type: 'POST',
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                dataType: "json",
+                traditional: true,
+                success: function (resultmodel) {
+                    $('#dl-status').addClass('hidden');
+                    $('#dlg').modal('hide');
+                },
+                error: function (err, scnd) {
+                    alert(err.statusText);
+                }
+            });
+        }
+    </script>
+    }
+</div>

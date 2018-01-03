@@ -1,0 +1,49 @@
+@model EvilComic.DataAccess.Xeinformation
+@{
+    ViewBag.Title = Model.Title;
+}
+
+@if (ViewBag.PageNum == Model.ImageCount)
+{
+    <img alt="@Model.Title" style="margin:0 auto;display:block;max-width:98%" src="@Url.Action("ComicImage", new { ComicId = Model.InformationId, Order = ViewBag.PageNum - 1 })">
+}
+else if (ViewBag.PageNum >= 1 && ViewBag.PageNum < Model.ImageCount)
+{
+    <a asp-action="ViewComic" asp-route-ComicId="@Model.InformationId" asp-route-PageNum="@(ViewBag.PageNum+1)" aria-label="Next">
+        <img alt="@Model.Title" style="margin:0 auto;display:block;max-width:98%" src="@Url.Action("ComicImage", new { ComicId = Model.InformationId, Order = ViewBag.PageNum - 1 })">
+    </a>
+}
+
+
+<nav aria-label="Page navigation">
+
+  <ul class="pagination">
+    @if (ViewBag.PageNum == 1)
+    {
+        <li class="disabled"><span aria-hidden="true">上一页</span></li>
+    }
+    else if (ViewBag.PageNum > 1 && ViewBag.PageNum <= Model.ImageCount)
+    {
+    <li>
+        <a href="@Url.Action("ViewComic", new { ComicId = Model.InformationId, PageNum = ViewBag.PageNum - 1 })" aria-label="Previous">
+            <span aria-hidden="true">上一页</span>
+        </a>
+    </li>
+    }
+    @if (ViewBag.PageNum == Model.ImageCount)
+    {
+        <li class="disabled"><span aria-hidden="true">下一页</span></li>
+    }
+    else if (ViewBag.PageNum >= 1 && ViewBag.PageNum < Model.ImageCount)
+    {
+    <li>
+        <a href="@Url.Action("ViewComic", new { ComicId = Model.InformationId, PageNum = ViewBag.PageNum + 1 })" aria-label="Next">
+            <span aria-hidden="true">下一页</span>
+        </a>
+    </li>
+    }
+    <li>
+        <span>第 @ViewBag.PageNum 页 </span><span>共 @Model.ImageCount 页</span>
+    </li>
+  </ul>
+</nav>
